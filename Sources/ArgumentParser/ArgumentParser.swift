@@ -40,6 +40,12 @@ public struct Option: Parsable {
     public let isRequired: Bool?
     public let callback: Callback?
     
+    public init(name: String, isRequired: Bool = false, callback: Callback?) {
+        self.name = name
+        self.isRequired = isRequired
+        self.callback = callback
+    }
+    
     public func test(arguments: [String]) throws -> Bool {
         return arguments.contains(name) || isRequired == false
     }
@@ -49,6 +55,12 @@ public struct Verb: Parsable {
     public let name: String
     public let parameters: [Parameter]?
     public let callback: Callback?
+    
+    public init(name: String, parameters: [Parameter]? = nil, callback: Callback?) {
+        self.name = name
+        self.parameters = parameters
+        self.callback = callback
+    }
     
     public func test(arguments: [String]) throws -> Bool {
         var parameters = [ResolvedParameter]()
@@ -108,6 +120,12 @@ public struct Group: Parsable {
     public var name: String
     public var verbs: [Verb]
     public var callback: Callback?
+    
+    public init(name: String, verbs: [Verb], callback: Callback?) {
+        self.name = name
+        self.verbs = verbs
+        self.callback = callback
+    }
     
     public func test(arguments: [String]) throws -> Bool {
         var lastPass = false
