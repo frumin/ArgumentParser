@@ -156,6 +156,12 @@ public struct Parameter: Hashable {
     public let name: String
     public let isRequired: Bool
     public let valueRequired: Bool
+    
+    public init(name: String, isRequired: Bool = false, valueRequired: Bool = false) {
+        self.name = name
+        self.isRequired = isRequired
+        self.valueRequired = valueRequired
+    }
 }
 
 extension CommandLine: Parser {
