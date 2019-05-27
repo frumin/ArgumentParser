@@ -51,7 +51,7 @@ final class ArgumentParserTests: XCTestCase {
         CommandLine.arguments.append(contentsOf: [testVerbName, testParamName])
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: false)
+        let parameter = Parameter(name: testParamName, description: "test", isRequired: true, valueRequired: false)
         let verb = Verb(name: testVerbName, description: "test", parameters: [parameter]) { (parameters) in
             XCTAssert(parameters?.count == 1, "Must have one parameter")
             XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
@@ -69,7 +69,7 @@ final class ArgumentParserTests: XCTestCase {
         CommandLine.arguments.append(contentsOf: [testVerbName, testParamName, testParamValue])
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: true)
+        let parameter = Parameter(name: testParamName, description: "test", isRequired: true, valueRequired: true)
         let verb = Verb(name: testVerbName, description: "test", parameters: [parameter]) { (parameters) in
             XCTAssert(parameters?.count == 1, "Must have one parameter")
             XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
@@ -88,8 +88,8 @@ final class ArgumentParserTests: XCTestCase {
         CommandLine.arguments.append(contentsOf: [testVerbName, testParamName, testParamValue])
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: true)
-        let secondParameter = Parameter(name: secondParamName, isRequired: false, valueRequired: false)
+        let parameter = Parameter(name: testParamName, description: "test", isRequired: true, valueRequired: true)
+        let secondParameter = Parameter(name: secondParamName, description: "test", isRequired: false, valueRequired: false)
         let verb = Verb(name: testVerbName, description: "test", parameters: [parameter, secondParameter]) { (parameters) in
             XCTAssert(parameters?.count == 2, "Must have two parameters")
             XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")

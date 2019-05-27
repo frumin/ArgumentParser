@@ -17,12 +17,13 @@ public extension Parsable {
 
 extension CommandLine: Parser {
     public static func parse(_ parsables: [Parsable]) throws {
+        let parsables = parsables.defaultParsables
         let sanitizedArguments = Array(arguments.dropFirst())
         if parsables.containsRequiredParsable == false && sanitizedArguments.isEmpty {
             parsables.printHelp()
             return
         }
-        for parsable in parsables.defaultParsables {
+        for parsable in parsables {
             try parsable.evaluate(arguments: sanitizedArguments)
         }
     }
@@ -95,6 +96,11 @@ extension RangeReplaceableCollection where Iterator.Element == Parsable {
         var help = "Usage:\n\n"
         for parsable in self {
             help += "\(parsable.name): \(parsable.description)\n"
+            if let parsable = parsable as? Verb, let parameters = parsable.parameters {
+                for parameter in parameters {
+                    help += "\t\(parameter.name): \(parameter.description)"
+                }
+            }
         }
         print(help)
     }

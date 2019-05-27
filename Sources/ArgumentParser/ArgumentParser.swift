@@ -196,11 +196,13 @@ public struct Group: Parsable {
 /// An optional match for some parsables
 public struct Parameter: Hashable {
     public let name: String
+    public let description: String
     public let isRequired: Bool
     public let valueRequired: Bool
     
-    public init(name: String, isRequired: Bool = false, valueRequired: Bool = false) {
+    public init(name: String, description: String, isRequired: Bool = false, valueRequired: Bool = false) {
         self.name = name
+        self.description = description
         self.isRequired = isRequired
         self.valueRequired = valueRequired
     }
