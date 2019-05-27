@@ -45,6 +45,15 @@ final class ArgumentParserTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
     }
     
+    func testSingleVerbRequired() {
+        let testVerbName = "required"
+        
+        let verb = Verb(name: testVerbName, description: "test a required verb", parameters: nil) { (parameters) in
+            //
+        }
+        XCTAssertNoThrow(try CommandLine.parse([verb]))
+    }
+    
     func testSingleVerbWithParameter() {
         let testVerbName = "test"
         let testParamName = "--source"
@@ -123,6 +132,7 @@ final class ArgumentParserTests: XCTestCase {
         ("testNoArgumentsRequired", testNoArgumentsRequired),
         ("testSingleOption", testSingleOption),
         ("testSingleVerb", testSingleVerb),
+        ("testSingleVerbRequired", testSingleVerbRequired),
         ("testSingleVerbWithParameterValue", testSingleVerbWithParameterValue),
         ("testSingleVerbWithMultipleParametersValue", testSingleVerbWithMultipleParametersValue),
         ("testVerbGroup", testVerbGroup),
