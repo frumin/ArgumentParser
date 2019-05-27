@@ -19,9 +19,8 @@ extension CommandLine: Parser {
     public static func parse(_ parsables: [Parsable]) throws {
         let parsables = parsables.defaultParsables
         let sanitizedArguments = Array(arguments.dropFirst())
-        if parsables.containsRequiredParsable == false && sanitizedArguments.isEmpty {
+        if sanitizedArguments.isEmpty {
             parsables.printHelp()
-            return
         }
         for parsable in parsables {
             try parsable.evaluate(arguments: sanitizedArguments)

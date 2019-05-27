@@ -8,25 +8,25 @@ final class ArgumentParserTests: XCTestCase {
     }
     
     func testNoArgumentsNotRequired() {
-        let testOptionName = "-test"
+        let testOptionName = "--test"
         
         let option = Option(name: testOptionName, description: "print test description", isRequired: false, callback: nil)
         XCTAssertNoThrow(try CommandLine.parse([option]))
     }
     
     func testNoArgumentsRequired() {
-        let testOptionName = "-test"
+        let testOptionName = "--test"
         
-        let option = Option(name: testOptionName, description: "test", isRequired: true, callback: nil)
+        let option = Option(name: testOptionName, description: "print test description", isRequired: true, callback: nil)
         XCTAssertThrowsError(try CommandLine.parse([option]))
     }
     
     func testSingleOption() {
-        let testOptionName = "-test"
+        let testOptionName = "--test"
         CommandLine.arguments.append(testOptionName)
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let option = Option(name: testOptionName, description: "test", isRequired: true) { (_) in
+        let option = Option(name: testOptionName, description: "print test description", isRequired: true) { (_) in
             expectation.fulfill()
         }
         XCTAssertNoThrow(try CommandLine.parse([option]))
