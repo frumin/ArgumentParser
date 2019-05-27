@@ -23,7 +23,12 @@ extension CommandLine: Parser {
             parsables.printHelp()
         }
         for parsable in parsables {
-            try parsable.evaluate(arguments: sanitizedArguments)
+            do {
+                try parsable.evaluate(arguments: sanitizedArguments)
+            } catch {
+                parsables.printHelp()
+                throw error
+            }
         }
     }
     
@@ -94,14 +99,33 @@ extension RangeReplaceableCollection where Iterator.Element == Parsable {
     func printHelp() {
         var help = "Usage:\n\n"
         for parsable in self {
-            help += "\(parsable.name): \(parsable.description)\n"
+            help += "\(parsable.name): \(parsable.description)\n".indented(by: 1)
             if let parsable = parsable as? Verb, let parameters = parsable.parameters {
                 for parameter in parameters {
-                    help += "\t\(parameter.name): \(parameter.description)\n"
+                    help += "\(parameter.name): \(parameter.description)\n".indented(by: 2)
                 }
                 help += "\n"
             }
         }
         print(help)
+    }
+}
+
+extension String {
+    func indented(by: Int) -> String {
+        var indented = ""
+        let lines = components(separatedBy: .newlines)
+        for (i, line) in lines.enumerated() {
+            guard line.count > 0 else { continue }
+            for _ in 0..<by {
+                indented += "\t"
+            }
+            indented += line
+            if i != lines.count - 1 {
+                indented += "\n"
+            }
+        }
+        
+        return indented
     }
 }
