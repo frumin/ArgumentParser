@@ -40,7 +40,8 @@ final class ArgumentParserTests: XCTestCase {
         let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: false)
         let verb = Verb(name: testVerbName, parameters: [parameter]) { (parameters) in
             XCTAssert(parameters?.count == 1, "Must have one parameter")
-            XCTAssert(parameters?.first?.parameter.name == testParamName, "Parameter must match")
+            XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
+            XCTAssert(try! parameters?.value(for: testParamName) == nil, "Parameter value must be nil")
             expectation.fulfill()
         }
         try! CommandLine.parse([verb])
@@ -57,8 +58,8 @@ final class ArgumentParserTests: XCTestCase {
         let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: true)
         let verb = Verb(name: testVerbName, parameters: [parameter]) { (parameters) in
             XCTAssert(parameters?.count == 1, "Must have one parameter")
-            XCTAssert(parameters?.first?.parameter.name == testParamName, "Parameter must match")
-            XCTAssert(parameters?.first?.value == testParamValue, "Values must match")
+            XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
+            XCTAssert(try! parameters?.value(for: testParamName) == testParamValue, "Values must match")
             expectation.fulfill()
         }
         try! CommandLine.parse([verb])
@@ -77,9 +78,9 @@ final class ArgumentParserTests: XCTestCase {
         let secondParameter = Parameter(name: secondParamName, isRequired: false, valueRequired: false)
         let verb = Verb(name: testVerbName, parameters: [parameter, secondParameter]) { (parameters) in
             XCTAssert(parameters?.count == 2, "Must have two parameters")
-            XCTAssert(parameters?.first?.parameter.name == testParamName, "Parameter must match")
-            XCTAssert(parameters?.first?.value == testParamValue, "Values must match")
-            XCTAssert(parameters?.last?.parameter.name == secondParamName, "Parameter must much")
+            XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
+            XCTAssert(try! parameters?.value(for: testParamName) == testParamValue, "Values must match")
+            XCTAssert(parameters?.allParamaters.last?.name == secondParamName, "Parameter must much")
             expectation.fulfill()
         }
         try! CommandLine.parse([verb])

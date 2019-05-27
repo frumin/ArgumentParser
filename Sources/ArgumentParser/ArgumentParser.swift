@@ -14,6 +14,10 @@ public enum ParsingError: Error {
     case missingVerb
 }
 
+public enum LookupError: Error {
+    case parameterNotResolved
+}
+
 public protocol Parsable {
     typealias ResolvedParameter = (parameter: Parameter, value: String?)
     typealias Callback = (_ parameters: [ResolvedParameter]?) -> Void
@@ -173,5 +177,22 @@ extension CommandLine: Parser {
     
     public func parse(_ parsables: [Parsable]) throws {
         try CommandLine.parse(parsables)
+    }
+}
+
+public extension Sequence where Iterator.Element == Parsable.ResolvedParameter {
+    var allParamaters: [Parameter] {
+        return self.compactMap {
+            return $0.parameter
+        }
+    }
+    
+    func value(for parameterName: String) throws -> String? {
+        guard let resolvedParamater = first(where: { (element) -> Bool in
+            element.parameter.name == parameterName
+        }) else {
+            throw LookupError.parameterNotResolved
+        }
+        return resolvedParamater.value
     }
 }
