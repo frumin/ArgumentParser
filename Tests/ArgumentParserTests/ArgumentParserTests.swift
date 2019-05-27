@@ -7,15 +7,29 @@ final class ArgumentParserTests: XCTestCase {
         CommandLine.arguments = [String(describing: self)]
     }
     
+    func testNoArgumentsNotRequired() {
+        let testOptionName = "-test"
+        
+        let option = Option(name: testOptionName, description: "print test description", isRequired: false, callback: nil)
+        XCTAssertNoThrow(try CommandLine.parse([option]))
+    }
+    
+    func testNoArgumentsRequired() {
+        let testOptionName = "-test"
+        
+        let option = Option(name: testOptionName, description: "test", isRequired: true, callback: nil)
+        XCTAssertThrowsError(try CommandLine.parse([option]))
+    }
+    
     func testSingleOption() {
         let testOptionName = "-test"
         CommandLine.arguments.append(testOptionName)
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let option = Option(name: testOptionName, isRequired: true) { (_) in
+        let option = Option(name: testOptionName, description: "test", isRequired: true) { (_) in
             expectation.fulfill()
         }
-        try! CommandLine.parse([option])
+        XCTAssertNoThrow(try CommandLine.parse([option]))
         wait(for: [expectation], timeout: 1)
     }
     
@@ -24,10 +38,10 @@ final class ArgumentParserTests: XCTestCase {
         CommandLine.arguments.append(testVerbName)
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let verb = Verb(name: testVerbName, parameters: nil) { (parameters) in
+        let verb = Verb(name: testVerbName, description: "test", parameters: nil) { (parameters) in
             expectation.fulfill()
         }
-        try! CommandLine.parse([verb])
+        XCTAssertNoThrow(try CommandLine.parse([verb]))
         wait(for: [expectation], timeout: 1)
     }
     
@@ -38,13 +52,13 @@ final class ArgumentParserTests: XCTestCase {
         
         let expectation = XCTestExpectation(description: "Verify callback")
         let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: false)
-        let verb = Verb(name: testVerbName, parameters: [parameter]) { (parameters) in
+        let verb = Verb(name: testVerbName, description: "test", parameters: [parameter]) { (parameters) in
             XCTAssert(parameters?.count == 1, "Must have one parameter")
             XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
             XCTAssert(try! parameters?.value(for: testParamName) == nil, "Parameter value must be nil")
             expectation.fulfill()
         }
-        try! CommandLine.parse([verb])
+        XCTAssertNoThrow(try CommandLine.parse([verb]))
         wait(for: [expectation], timeout: 1)
     }
     
@@ -56,13 +70,13 @@ final class ArgumentParserTests: XCTestCase {
         
         let expectation = XCTestExpectation(description: "Verify callback")
         let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: true)
-        let verb = Verb(name: testVerbName, parameters: [parameter]) { (parameters) in
+        let verb = Verb(name: testVerbName, description: "test", parameters: [parameter]) { (parameters) in
             XCTAssert(parameters?.count == 1, "Must have one parameter")
             XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
             XCTAssert(try! parameters?.value(for: testParamName) == testParamValue, "Values must match")
             expectation.fulfill()
         }
-        try! CommandLine.parse([verb])
+        XCTAssertNoThrow(try CommandLine.parse([verb]))
         wait(for: [expectation], timeout: 1)
     }
     
@@ -76,14 +90,14 @@ final class ArgumentParserTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Verify callback")
         let parameter = Parameter(name: testParamName, isRequired: true, valueRequired: true)
         let secondParameter = Parameter(name: secondParamName, isRequired: false, valueRequired: false)
-        let verb = Verb(name: testVerbName, parameters: [parameter, secondParameter]) { (parameters) in
+        let verb = Verb(name: testVerbName, description: "test", parameters: [parameter, secondParameter]) { (parameters) in
             XCTAssert(parameters?.count == 2, "Must have two parameters")
             XCTAssert(parameters?.allParamaters.first?.name == testParamName, "Parameter must match")
             XCTAssert(try! parameters?.value(for: testParamName) == testParamValue, "Values must match")
             XCTAssert(parameters?.allParamaters.last?.name == secondParamName, "Parameter must much")
             expectation.fulfill()
         }
-        try! CommandLine.parse([verb])
+        XCTAssertNoThrow(try CommandLine.parse([verb]))
         wait(for: [expectation], timeout: 1)
     }
     
@@ -93,18 +107,20 @@ final class ArgumentParserTests: XCTestCase {
         CommandLine.arguments.append(contentsOf: [firstTestVerbName])
         
         let expectation = XCTestExpectation(description: "Verify callback")
-        let firstVerb = Verb(name: firstTestVerbName, parameters: nil) { (parameters) in
+        let firstVerb = Verb(name: firstTestVerbName, description: "test1", parameters: nil) { (parameters) in
             expectation.fulfill()
         }
-        let secondVerb = Verb(name: secondTestVerbName, parameters: nil) { (parameters) in
+        let secondVerb = Verb(name: secondTestVerbName, description: "test2", parameters: nil) { (parameters) in
             expectation.fulfill()
         }
-        let group = Group(name: "verbs", verbs: [firstVerb, secondVerb], callback: nil)
-        try! CommandLine.parse([group])
+        let group = Group(name: "verbs", description: "test", verbs: [firstVerb, secondVerb], callback: nil)
+        XCTAssertNoThrow(try CommandLine.parse([group]))
         wait(for: [expectation], timeout: 1)
     }
     
     static var allTests = [
+        ("testNoArgumentsNotRequired", testNoArgumentsNotRequired),
+        ("testNoArgumentsRequired", testNoArgumentsRequired),
         ("testSingleOption", testSingleOption),
         ("testSingleVerb", testSingleVerb),
         ("testSingleVerbWithParameterValue", testSingleVerbWithParameterValue),
