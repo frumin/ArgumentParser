@@ -98,8 +98,9 @@ extension RangeReplaceableCollection where Iterator.Element == Parsable {
             help += "\(parsable.name): \(parsable.description)\n"
             if let parsable = parsable as? Verb, let parameters = parsable.parameters {
                 for parameter in parameters {
-                    help += "\t\(parameter.name): \(parameter.description)"
+                    help += "\t\(parameter.name): \(parameter.description)\n"
                 }
+                help += "\n"
             }
         }
         print(help)
