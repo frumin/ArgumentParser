@@ -7,6 +7,12 @@
 
 import Foundation
 
+/// Error thrown during parsing
+///
+/// - missingParameterValue: Required parameter is missing a required value
+/// - missingParameter: Required parameter is missing
+/// - missingOption: Required option is missing
+/// - missingVerb: Missing at least one verb
 public enum ParsingError: Error {
     case missingParameterValue(Parameter)
     case missingParameter(Parameter)
@@ -20,19 +26,42 @@ public enum LookupError: Error {
 
 /// Defines a structure that can be parsed with argument array
 public protocol Parsable {
+    
+    /// Parsed parameter with optional value
     typealias ResolvedParameter = (parameter: Parameter, value: String?)
+    
+    /// Closure containing resolved parameters
     typealias Callback = (_ parameters: [ResolvedParameter]?) -> Void
+    
+    /// String value that will be matched against parameters array
     var name: String { get }
+    
+    /// Describes usage
     var description: String { get }
+    
+    /// Called when Parsable successfully evaluates
     var callback: Callback? { get }
+    
+    /// Test arguments for Parsable presence
+    ///
+    /// - Parameter arguments: array of command line arguments
+    /// - Returns: `true` if arguments contain the element, otherwise `false`
+    /// - Throws: error when element is required and missing
     func test(arguments: [String]) throws -> Bool
+    
+    /// Evalutes arguments and calls completion on found Parsable elements
+    ///
+    /// - Parameter arguments: array of command line arguments
+    /// - Throws: error when element is required and missing
     func evaluate(arguments: [String]) throws
 }
 
+/// Defines an argument parser
 public protocol Parser {
     func parse(_ parsables: [Parsable]) throws
 }
 
+/// A parsable that only matches a name
 public struct Option: Parsable {
     public let name: String
     public let description: String
@@ -57,6 +86,7 @@ public struct Option: Parsable {
     }
 }
 
+/// A parsable that matches a name and optional parameters
 public struct Verb: Parsable {
     public let name: String
     public var description: String
@@ -120,6 +150,7 @@ public struct Verb: Parsable {
     }
 }
 
+/// A collection of verbs, at least one must be present in arguments array
 public struct Group: Parsable {
     enum ParsingError: Error {
         case multipleVerbs
@@ -162,6 +193,7 @@ public struct Group: Parsable {
     
 }
 
+/// An optional match for some parsables
 public struct Parameter: Hashable {
     public let name: String
     public let isRequired: Bool

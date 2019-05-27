@@ -33,12 +33,19 @@ extension CommandLine: Parser {
 }
 
 public extension Sequence where Iterator.Element == Parsable.ResolvedParameter {
+    
+    /// All `Parameter` elements in `Sequence`
     var allParamaters: [Parameter] {
         return self.compactMap {
             return $0.parameter
         }
     }
     
+    /// Lookup value of parameter
+    ///
+    /// - Parameter parameterName: Name of looked up parameter
+    /// - Returns: Optional value of passed in parameter
+    /// - Throws: error when parameter is missing
     func value(for parameterName: String) throws -> String? {
         guard let resolvedParamater = first(where: { (element) -> Bool in
             element.parameter.name == parameterName
