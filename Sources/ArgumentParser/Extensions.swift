@@ -60,7 +60,7 @@ extension Collection where Iterator.Element == Parameter {
 extension RangeReplaceableCollection where Iterator.Element == Parsable {
     var defaultParsables: Self {
         var parsables = self
-        let help = Verb(name: "help", description: "show help") { (_) in self.printHelp() }
+        let help = Option(name: "help", description: "show help") { (_) in self.printHelp() }
         if self.contains(where: { (parsable) -> Bool in parsable.name == help.name }) == false {
             parsables.append(help)
         }

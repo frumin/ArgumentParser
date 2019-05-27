@@ -47,8 +47,11 @@ public struct Option: Parsable {
     }
     
     public func test(arguments: [String]) throws -> Bool {
-        if arguments.contains(name) == false && isRequired ?? false {
-            throw ParsingError.missingOption
+        if arguments.contains(name) == false {
+            if isRequired ?? false {
+                throw ParsingError.missingOption
+            }
+            return false
         }
         return true
     }
